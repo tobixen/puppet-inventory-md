@@ -1,0 +1,15 @@
+.git/
+.*.sw[op]
+*~
+*.lock
+*.log
+.bundle/
+coverage/
+Gemfile.lock
+pkg/
+spec/fixtures/manifests/
+spec/fixtures/modules/
+vendor/
+.vendor/
+.yardoc/
+doc/

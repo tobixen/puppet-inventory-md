@@ -1,0 +1,44 @@
+---
+name: Spec Tests
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+  workflow_call:
+
+jobs:
+  spec:
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        puppet_version:
+          - '7.0'
+          - '8.0'
+    name: Puppet ${{ matrix.puppet_version }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: '3.2'
+        env:
+          PUPPET_GEM_VERSION: "~> ${{ matrix.puppet_version }}"
+
+      - name: Install dependencies
+        run: bundle install --jobs 4
+        env:
+          PUPPET_GEM_VERSION: "~> ${{ matrix.puppet_version }}"
+
+      - name: Run puppet-lint
+        run: bundle exec rake lint
+
+      - name: Run spec tests
+        run: bundle exec rake spec
