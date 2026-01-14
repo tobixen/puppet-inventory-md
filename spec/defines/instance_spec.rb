@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'inventory_system::instance' do
+describe 'inventory_md::instance' do
   let(:title) { 'testinv' }
   let(:params) do
     {
@@ -10,7 +10,7 @@ describe 'inventory_system::instance' do
   end
 
   # We need to include the parent class
-  let(:pre_condition) { 'include inventory_system' }
+  let(:pre_condition) { 'include inventory_md' }
 
   context 'with default parameters' do
     it { is_expected.to compile.with_all_deps }

@@ -6,8 +6,8 @@ All notable changes to this project will be documented in this file.
 
 ### Added
 - Initial release
-- Main `inventory_system` class for installation
-- `inventory_system::instance` defined type for managing instances
+- Main `inventory_md` class for installation
+- `inventory_md::instance` defined type for managing instances
 - Systemd service management
 - Git workflow with bare repositories and post-receive hooks
 - Optional Anthropic API key support

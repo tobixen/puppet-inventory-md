@@ -5,7 +5,7 @@
 #
 # @param instances
 #   Hash of inventory instances to create. Each key is the instance name,
-#   and the value is a hash of parameters for inventory_system::instance.
+#   and the value is a hash of parameters for inventory_md::instance.
 #
 # @param anthropic_api_key
 #   Optional Anthropic API key for Claude chat functionality.
@@ -20,7 +20,7 @@
 #   Directory to install inventory-system to.
 #
 # @example Basic usage
-#   class { 'inventory_system':
+#   class { 'inventory_md':
 #     anthropic_api_key => 'sk-ant-...',
 #     instances         => {
 #       'home' => {
@@ -30,7 +30,7 @@
 #     },
 #   }
 #
-class inventory_system (
+class inventory_md (
   Hash $instances                                        = {},
   Optional[String] $anthropic_api_key                    = undef,
   String $source_repo                                    = 'https://github.com/tobixen/inventory-system.git',
@@ -59,7 +59,7 @@ class inventory_system (
   # Initial installation (runs only once)
   exec { 'initial-install-inventory-system':
     command => "/usr/bin/make -C ${install_dir} install",
-    creates => "${install_dir}/venv/bin/inventory-system",
+    creates => "${install_dir}/venv/bin/inventory-md",
     require => [Package['python3-venv'], Package['make'], Vcsrepo[$install_dir]],
   }
 
@@ -90,7 +90,7 @@ class inventory_system (
 
   # Create instances from parameters, passing down anthropic_api_key
   $instances.each |String $name, Hash $params| {
-    inventory_system::instance { $name:
+    inventory_md::instance { $name:
       anthropic_api_key => $anthropic_api_key,
       install_dir       => $install_dir,
       *                 => $params,

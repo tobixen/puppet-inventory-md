@@ -1,4 +1,4 @@
-# inventory_system
+# inventory_md
 
 A Puppet module for deploying [inventory-system](https://github.com/tobixen/inventory-system) instances for tracking home inventories.
 
@@ -30,7 +30,7 @@ Features:
 ### Basic usage
 
 ```puppet
-class { 'inventory_system':
+class { 'inventory_md':
   instances => {
     'home' => {
       datadir  => '/var/www/inventory/home',
@@ -43,8 +43,8 @@ class { 'inventory_system':
 ### With Anthropic API key for Claude chat
 
 ```puppet
-class { 'inventory_system':
-  anthropic_api_key => lookup('inventory_system::anthropic_api_key'),
+class { 'inventory_md':
+  anthropic_api_key => lookup('inventory_md::anthropic_api_key'),
   instances         => {
     'home' => {
       datadir  => '/var/www/inventory/home',
@@ -61,8 +61,8 @@ class { 'inventory_system':
 ### Hiera example
 
 ```yaml
-inventory_system::anthropic_api_key: ENC[PKCS7,...]
-inventory_system::instances:
+inventory_md::anthropic_api_key: ENC[PKCS7,...]
+inventory_md::instances:
   home:
     datadir: /var/www/inventory/home
     api_port: 8765

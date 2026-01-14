@@ -7,4 +7,4 @@ fixtures:
       repo: puppetlabs/vcsrepo
       ref: 6.0.0
   symlinks:
-    inventory_system: "#{source_dir}"
+    inventory_md: "#{source_dir}"

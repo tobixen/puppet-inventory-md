@@ -1,5 +1,5 @@
 {
-  "name": "tobixen-inventory_system",
+  "name": "tobixen-inventory_md",
   "version": "0.1.0",
   "author": "tobixen",
   "summary": "Puppet module for deploying inventory-system instances",

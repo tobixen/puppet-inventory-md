@@ -1,6 +1,6 @@
 require 'spec_helper'
 
-describe 'inventory_system' do
+describe 'inventory_md' do
   context 'with default parameters' do
     it { is_expected.to compile.with_all_deps }
 
@@ -71,7 +71,7 @@ describe 'inventory_system' do
     end
 
     it { is_expected.to compile.with_all_deps }
-    it { is_expected.to contain_inventory_system__instance('test') }
+    it { is_expected.to contain_inventory_md__instance('test') }
   end
 
   context 'with anthropic_api_key' do
@@ -89,7 +89,7 @@ describe 'inventory_system' do
     it { is_expected.to compile.with_all_deps }
 
     it {
-      is_expected.to contain_inventory_system__instance('myinv').with(
+      is_expected.to contain_inventory_md__instance('myinv').with(
         anthropic_api_key: 'sk-ant-test123',
       )
     }

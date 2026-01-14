@@ -23,7 +23,7 @@ fi
 if git pull --ff-only origin "$BRANCH"; then
     echo "Production updated successfully for <%= $name %>"
     # Regenerate inventory.json
-    <%= $install_dir %>/venv/bin/inventory-system parse inventory.md
+    <%= $install_dir %>/venv/bin/inventory-md parse inventory.md
 else
     echo "Warning: Cannot fast-forward <%= $name %> - manual merge needed on laptop"
     exit 1

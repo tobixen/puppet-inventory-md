@@ -31,12 +31,12 @@
 #   Directory where inventory-system is installed.
 #
 # @example Basic instance
-#   inventory_system::instance { 'myinventory':
+#   inventory_md::instance { 'myinventory':
 #     datadir  => '/var/www/inventory/myinventory',
 #     api_port => 8765,
 #   }
 #
-define inventory_system::instance (
+define inventory_md::instance (
   Stdlib::Absolutepath $datadir,
   Integer[1024, 65535] $api_port                         = 8765,
   String $user                                           = "inventory-${name}",
@@ -81,7 +81,7 @@ define inventory_system::instance (
     mode    => '0640',
     owner   => 'root',
     group   => $group,
-    content => epp('inventory_system/instance.conf.epp', {
+    content => epp('inventory_md/instance.conf.epp', {
       'name'              => $name,
       'datadir'           => $datadir,
       'api_port'          => $api_port,
@@ -128,7 +128,7 @@ define inventory_system::instance (
   # Install post-receive hook
   file { "${git_bare_repo}/hooks/post-receive":
     ensure  => file,
-    content => epp('inventory_system/post-receive.epp', {
+    content => epp('inventory_md/post-receive.epp', {
       'name'        => $name,
       'datadir'     => $datadir,
       'install_dir' => $install_dir,
