@@ -82,10 +82,10 @@ define inventory_system::instance (
     owner   => 'root',
     group   => $group,
     content => epp('inventory_system/instance.conf.epp', {
-      'name'               => $name,
-      'datadir'            => $datadir,
-      'api_port'           => $api_port,
-      'anthropic_api_key'  => $anthropic_api_key,
+      'name'              => $name,
+      'datadir'           => $datadir,
+      'api_port'          => $api_port,
+      'anthropic_api_key' => $anthropic_api_key,
     }),
     require => File['/etc/inventory-system'],
   }
