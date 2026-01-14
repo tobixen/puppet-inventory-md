@@ -38,7 +38,7 @@ class inventory_system (
   Stdlib::Absolutepath $install_dir                      = '/opt/inventory-system',
 ) {
   # Ensure required packages
-  ensure_packages(['python3-pip', 'python3-venv', 'git', 'make'])
+  stdlib::ensure_packages(['python3-pip', 'python3-venv', 'git', 'make'])
 
   # Install inventory-system from git repository
   vcsrepo { $install_dir:
