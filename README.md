@@ -98,6 +98,72 @@ git remote add server user@server:/var/lib/inventory-system/home.git
 git push server main
 ```
 
+## Web server proxy configuration
+
+The API server listens on localhost. To make it accessible from the web, configure
+your web server (nginx/Apache) to proxy requests. This module does **not** manage
+web server configuration because:
+- SSL certificate paths vary (Let's Encrypt, manual certs, etc.)
+- Authentication requirements differ per deployment
+- Web server configs often have site-specific customizations
+
+### nginx example
+
+```nginx
+server {
+    listen 443 ssl;
+    server_name inventory.example.com;
+
+    # SSL (configure separately, e.g., with certbot)
+    ssl_certificate /etc/letsencrypt/live/inventory.example.com/fullchain.pem;
+    ssl_certificate_key /etc/letsencrypt/live/inventory.example.com/privkey.pem;
+
+    # Static files from datadir
+    root /var/www/inventory/home;
+    index search.html;
+
+    # Proxy API requests to inventory-api service
+    location /api/ {
+        proxy_pass http://127.0.0.1:8765/api/;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+    }
+
+    location /chat {
+        proxy_pass http://127.0.0.1:8765/chat;
+        proxy_read_timeout 120s;
+    }
+
+    location /health {
+        proxy_pass http://127.0.0.1:8765/health;
+    }
+
+    # Authentication (recommended)
+    auth_basic "Inventory";
+    auth_basic_user_file /etc/nginx/.htpasswd;
+}
+```
+
+### Apache example
+
+```apache
+<VirtualHost *:443>
+    ServerName inventory.example.com
+    DocumentRoot /var/www/inventory/home
+
+    # Proxy to API
+    ProxyPass /api/ http://127.0.0.1:8765/api/
+    ProxyPassReverse /api/ http://127.0.0.1:8765/api/
+    ProxyPass /chat http://127.0.0.1:8765/chat
+    ProxyPassReverse /chat http://127.0.0.1:8765/chat
+    ProxyPass /health http://127.0.0.1:8765/health
+    ProxyPassReverse /health http://127.0.0.1:8765/health
+</VirtualHost>
+```
+
+For detailed configuration including SSL setup and authentication, see the
+[inventory-system installation guide](https://github.com/tobixen/inventory-system/blob/main/docs/INSTALLATION.md).
+
 ## Development
 
 Run tests:
