@@ -98,14 +98,24 @@ git remote add server user@server:/var/lib/inventory-system/home.git
 git push server main
 ```
 
+## What this module does NOT handle
+
+- Web server configuration (nginx/Apache) - set up separately
+- SSL/TLS certificates
+- Authentication (basic auth, OAuth, etc.)
+- The actual inventory data (inventory.md)
+- Photo storage and synchronization
+- DNS configuration
+- Firewall rules
+
 ## Web server proxy configuration
 
-The API server listens on localhost. To make it accessible from the web, configure
-your web server (nginx/Apache) to proxy requests. This module does **not** manage
-web server configuration because:
-- SSL certificate paths vary (Let's Encrypt, manual certs, etc.)
-- Authentication requirements differ per deployment
-- Web server configs often have site-specific customizations
+The API server listens on `127.0.0.1` (localhost) by default. To make it accessible
+from the web, configure your web server (nginx/Apache) to proxy requests.
+
+**Note:** The `inventory-md` CLI supports `--host 0.0.0.0` to bind to all interfaces,
+but the systemd services managed by this module use localhost for security. If you
+need different binding, modify the systemd service or use a reverse proxy.
 
 ### nginx example
 
