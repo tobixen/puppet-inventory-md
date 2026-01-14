@@ -1,6 +1,6 @@
 # inventory_md
 
-A Puppet module for deploying [inventory-system](https://github.com/tobixen/inventory-system) instances for tracking home inventories.
+A Puppet module for deploying [inventory-system](https://github.com/tobixen/inventory-md) instances for tracking home inventories.
 
 ## Description
 
@@ -162,7 +162,7 @@ server {
 ```
 
 For detailed configuration including SSL setup and authentication, see the
-[inventory-system installation guide](https://github.com/tobixen/inventory-system/blob/main/docs/INSTALLATION.md).
+[inventory-system installation guide](https://github.com/tobixen/inventory-md/blob/main/docs/INSTALLATION.md).
 
 ## Development
 

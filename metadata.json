@@ -4,9 +4,9 @@
   "author": "tobixen",
   "summary": "Puppet module for deploying inventory-system instances",
   "license": "Apache-2.0",
-  "source": "https://github.com/tobixen/puppet-inventory-system",
-  "project_page": "https://github.com/tobixen/puppet-inventory-system",
-  "issues_url": "https://github.com/tobixen/puppet-inventory-system/issues",
+  "source": "https://github.com/tobixen/puppet-inventory-md",
+  "project_page": "https://github.com/tobixen/puppet-inventory-md",
+  "issues_url": "https://github.com/tobixen/puppet-inventory-md/issues",
   "dependencies": [
     {
       "name": "puppetlabs/stdlib",
