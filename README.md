@@ -80,6 +80,7 @@ inventory_md::instances:
 |-----------|------|---------|-------------|
 | `datadir` | Stdlib::Absolutepath | *required* | Directory for inventory data |
 | `api_port` | Integer[1024,65535] | 8765 | Port for API server |
+| `api_host` | String | `127.0.0.1` | Host to bind API server (use `0.0.0.0` for LAN) |
 | `user` | String | `inventory-$name` | System user |
 | `group` | String | `inventory-$name` | System group |
 | `additional_members` | Array[String] | [] | Users to add to instance group |
@@ -110,12 +111,11 @@ git push server main
 
 ## Web server proxy configuration
 
-The API server listens on `127.0.0.1` (localhost) by default. To make it accessible
-from the web, configure your web server (nginx/Apache) to proxy requests.
+The API server listens on `127.0.0.1` (localhost) by default. To bind to all interfaces
+for LAN access, set `api_host => '0.0.0.0'` in the instance configuration.
 
-**Note:** The `inventory-md` CLI supports `--host 0.0.0.0` to bind to all interfaces,
-but the systemd services managed by this module use localhost for security. If you
-need different binding, modify the systemd service or use a reverse proxy.
+For production deployments, it's recommended to keep the default localhost binding and
+use a reverse proxy (nginx/Apache) with SSL and authentication.
 
 ### nginx example
 

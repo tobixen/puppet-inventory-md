@@ -9,6 +9,10 @@
 # @param api_port
 #   Port for the inventory API service.
 #
+# @param api_host
+#   Host/IP to bind the API server to. Default '127.0.0.1' (localhost only).
+#   Use '0.0.0.0' to bind to all interfaces for LAN access.
+#
 # @param user
 #   System user to run the instance as.
 #
@@ -39,6 +43,7 @@
 define inventory_md::instance (
   Stdlib::Absolutepath $datadir,
   Integer[1024, 65535] $api_port                         = 8765,
+  String $api_host                                       = '127.0.0.1',
   String $user                                           = "inventory-${name}",
   String $group                                          = "inventory-${name}",
   Integer[0, 690] $uid_offset                            = fqdn_rand(690, $name),
@@ -85,6 +90,7 @@ define inventory_md::instance (
       'name'              => $name,
       'datadir'           => $datadir,
       'api_port'          => $api_port,
+      'api_host'          => $api_host,
       'anthropic_api_key' => $anthropic_api_key,
     }),
     require => File['/etc/inventory-system'],
