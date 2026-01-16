@@ -45,7 +45,7 @@ define inventory_md::instance (
   Optional[String] $anthropic_api_key                    = undef,
   Array[String] $additional_members                      = [],
   Stdlib::Absolutepath $git_bare_repo                    = "/var/lib/inventory-system/${name}.git",
-  Stdlib::Absolutepath $install_dir                      = '/opt/inventory-system',
+  Stdlib::Absolutepath $install_dir                      = '/opt/inventory-md',
 ) {
   # Create user and group for this instance
   if !defined(Group[$group]) {

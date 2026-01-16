@@ -35,7 +35,7 @@ class inventory_md (
   Optional[String] $anthropic_api_key                    = undef,
   String $source_repo                                    = 'https://github.com/tobixen/inventory-system.git',
   String $source_revision                                = 'main',
-  Stdlib::Absolutepath $install_dir                      = '/opt/inventory-system',
+  Stdlib::Absolutepath $install_dir                      = '/opt/inventory-md',
 ) {
   # Ensure required packages
   stdlib::ensure_packages(['python3-pip', 'python3-venv', 'git', 'make'])
