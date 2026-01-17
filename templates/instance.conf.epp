@@ -5,11 +5,9 @@
 # Path to inventory directory (containing inventory.json)
 INVENTORY_PATH=<%= $datadir %>
 
-# API server port
-API_PORT=<%= $api_port %>
-
-# API server host
+# API server host and port
 API_HOST=<%= $api_host %>
+API_PORT=<%= $api_port %>
 
 <% if $anthropic_api_key { -%>
 # Anthropic API key for Claude chat
