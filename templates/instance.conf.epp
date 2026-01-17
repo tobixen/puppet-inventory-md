@@ -1,4 +1,4 @@
-<%- | String $name, String $datadir, Integer $api_port, Optional[String] $anthropic_api_key | -%>
+<%- | String $name, String $datadir, Integer $api_port, String $api_host, Optional[String] $anthropic_api_key | -%>
 # Inventory System Configuration for <%= $name %> instance
 # Managed by Puppet
 
@@ -7,6 +7,9 @@ INVENTORY_PATH=<%= $datadir %>
 
 # API server port
 API_PORT=<%= $api_port %>
+
+# API server host
+API_HOST=<%= $api_host %>
 
 <% if $anthropic_api_key { -%>
 # Anthropic API key for Claude chat

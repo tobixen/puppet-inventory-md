@@ -3,8 +3,5 @@ fixtures:
     stdlib:
       repo: puppetlabs/stdlib
       ref: 9.0.0
-    vcsrepo:
-      repo: puppetlabs/vcsrepo
-      ref: 6.0.0
   symlinks:
     inventory_md: "#{source_dir}"

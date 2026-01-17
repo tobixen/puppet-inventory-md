@@ -1,0 +1,27 @@
+<%- | | -%>
+# Managed by Puppet
+[Unit]
+Description=Inventory Web Server (%i)
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=inventory-%i
+Group=inventory-%i
+EnvironmentFile=/etc/inventory-system/%i.conf
+ExecStart=/usr/local/bin/inventory-md serve ${INVENTORY_PATH} --port ${WEB_PORT}
+Restart=on-failure
+RestartSec=5s
+
+# Security
+NoNewPrivileges=true
+PrivateTmp=true
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=inventory-web-%i
+
+[Install]
+WantedBy=multi-user.target

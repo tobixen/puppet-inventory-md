@@ -1,29 +1,33 @@
 # inventory_md
 
-A Puppet module for deploying [inventory-system](https://github.com/tobixen/inventory-md) instances for tracking home inventories.
+A Puppet module for deploying [inventory-md](https://github.com/tobixen/inventory-md) instances for tracking home inventories.
 
 ## Description
 
-This module installs and configures the inventory-system application, a Python-based tool for maintaining home inventories with an API server for web access and optional Claude AI chat integration.
+This module installs and configures the inventory-md application, a Python-based tool for maintaining home inventories with an API server for web access and optional Claude AI chat integration.
 
 Features:
-- Installs inventory-system from git with Python virtual environment
+- Installs inventory-md from PyPI using pip
 - Creates systemd services for API endpoints
 - Supports multiple inventory instances on the same host
-- Git-based workflow with bare repositories and auto-deploy hooks
 - Optional Anthropic API key integration for AI-powered chat
 
 ## Requirements
 
 - Puppet 7.0 or later
 - Ubuntu 20.04/22.04/24.04 or Debian 11/12
-- Python 3 with venv support
-- Git
+- Python 3 with pip
 
 ## Dependencies
 
 - [puppetlabs/stdlib](https://forge.puppet.com/modules/puppetlabs/stdlib) >= 8.0.0
-- [puppetlabs/vcsrepo](https://forge.puppet.com/modules/puppetlabs/vcsrepo) >= 5.0.0
+
+## Installation alternatives
+
+For **Arch Linux**, consider using the AUR package `inventory-md` instead, which includes systemd services and proper system integration:
+```bash
+yay -S inventory-md
+```
 
 ## Usage
 
@@ -58,6 +62,20 @@ class { 'inventory_md':
 }
 ```
 
+### Exposing to LAN
+
+```puppet
+class { 'inventory_md':
+  instances => {
+    'home' => {
+      datadir  => '/var/www/inventory/home',
+      api_port => 8765,
+      api_host => '0.0.0.0',  # Listen on all interfaces
+    },
+  },
+}
+```
+
 ### Hiera example
 
 ```yaml
@@ -66,6 +84,7 @@ inventory_md::instances:
   home:
     datadir: /var/www/inventory/home
     api_port: 8765
+    api_host: '127.0.0.1'
     additional_members:
       - alice
       - bob
@@ -74,33 +93,29 @@ inventory_md::instances:
     api_port: 8766
 ```
 
+### Class parameters
+
+| Parameter | Type | Default | Description |
+|-----------|------|---------|-------------|
+| `instances` | Hash | {} | Hash of instances to create |
+| `anthropic_api_key` | Optional[String] | undef | API key for Claude chat |
+| `package_ensure` | String | 'present' | Version or present/latest |
+| `pip_extras` | Array[String] | ['chat'] | Pip extras to install |
+
 ### Instance parameters
 
 | Parameter | Type | Default | Description |
 |-----------|------|---------|-------------|
 | `datadir` | Stdlib::Absolutepath | *required* | Directory for inventory data |
 | `api_port` | Integer[1024,65535] | 8765 | Port for API server |
+| `api_host` | String | '127.0.0.1' | Host/IP to bind to |
 | `user` | String | `inventory-$name` | System user |
 | `group` | String | `inventory-$name` | System group |
 | `additional_members` | Array[String] | [] | Users to add to instance group |
-| `git_bare_repo` | Stdlib::Absolutepath | `/var/lib/inventory-system/$name.git` | Bare repo for git workflow |
-
-## Git workflow
-
-Each instance sets up a git workflow:
-1. A bare repository at `git_bare_repo`
-2. A working directory at `datadir`
-3. A post-receive hook that auto-deploys on push
-
-Push changes from your laptop:
-```bash
-git remote add server user@server:/var/lib/inventory-system/home.git
-git push server main
-```
 
 ## Web server proxy configuration
 
-The API server listens on localhost. To make it accessible from the web, configure
+The API server listens on localhost by default. To make it accessible from the web, configure
 your web server (nginx/Apache) to proxy requests. This module does **not** manage
 web server configuration because:
 - SSL certificate paths vary (Let's Encrypt, manual certs, etc.)
@@ -162,7 +177,7 @@ server {
 ```
 
 For detailed configuration including SSL setup and authentication, see the
-[inventory-system installation guide](https://github.com/tobixen/inventory-md/blob/main/docs/INSTALLATION.md).
+[inventory-md installation guide](https://github.com/tobixen/inventory-md/blob/main/docs/INSTALLATION.md).
 
 ## Development
 

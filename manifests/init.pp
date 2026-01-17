@@ -10,14 +10,11 @@
 # @param anthropic_api_key
 #   Optional Anthropic API key for Claude chat functionality.
 #
-# @param source_repo
-#   Git repository URL to clone inventory-system from.
+# @param package_ensure
+#   Version or 'present'/'latest' for the pip package.
 #
-# @param source_revision
-#   Git revision (branch/tag) to checkout.
-#
-# @param install_dir
-#   Directory to install inventory-system to.
+# @param pip_extras
+#   Pip extras to install, e.g., ['chat', 'barcode']. Default: ['chat']
 #
 # @example Basic usage
 #   class { 'inventory_md':
@@ -30,56 +27,48 @@
 #     },
 #   }
 #
+# @note For Arch Linux, consider using the AUR package 'inventory-md' instead,
+#   which includes systemd services and proper system integration.
+#
 class inventory_md (
-  Hash $instances                                        = {},
-  Optional[String] $anthropic_api_key                    = undef,
-  String $source_repo                                    = 'https://github.com/tobixen/inventory-system.git',
-  String $source_revision                                = 'main',
-  Stdlib::Absolutepath $install_dir                      = '/opt/inventory-md',
+  Hash $instances                    = {},
+  Optional[String] $anthropic_api_key = undef,
+  String $package_ensure             = 'present',
+  Array[String] $pip_extras          = ['chat'],
 ) {
-  # Ensure required packages
-  stdlib::ensure_packages(['python3-pip', 'python3-venv', 'git', 'make'])
+  # Build package name with extras
+  $extras_str = $pip_extras.empty ? {
+    true  => '',
+    false => "[${pip_extras.join(',')}]",
+  }
+  $package_name = "inventory-md${extras_str}"
 
-  # Install inventory-system from git repository
-  vcsrepo { $install_dir:
-    ensure   => latest,
-    provider => git,
-    source   => $source_repo,
-    revision => $source_revision,
+  # Install inventory-md from PyPI
+  package { 'inventory-md':
+    ensure   => $package_ensure,
+    name     => $package_name,
+    provider => pip3,
   }
 
-  # Create Python virtual environment and install inventory-system
-  exec { 'install-inventory-system':
-    command     => "/usr/bin/make -C ${install_dir} install",
-    refreshonly => true,
-    subscribe   => Vcsrepo[$install_dir],
-    require     => [Package['python3-venv'], Package['make']],
-  }
-
-  # Initial installation (runs only once)
-  exec { 'initial-install-inventory-system':
-    command => "/usr/bin/make -C ${install_dir} install",
-    creates => "${install_dir}/venv/bin/inventory-md",
-    require => [Package['python3-venv'], Package['make'], Vcsrepo[$install_dir]],
-  }
-
-  # Create base directories
+  # Create configuration directory
   file { '/etc/inventory-system':
     ensure => 'directory',
     mode   => '0755',
   }
 
-  # Install systemd template services via symlinks
+  # Install systemd template services
   file {
     default:
-      require => Vcsrepo[$install_dir],
+      require => Package['inventory-md'],
       notify  => Exec['systemd-daemon-reload'];
     '/etc/systemd/system/inventory-api@.service':
-      ensure => 'link',
-      target => "${install_dir}/systemd/inventory-api@.service";
+      ensure  => 'file',
+      mode    => '0644',
+      content => epp('inventory_md/inventory-api@.service.epp');
     '/etc/systemd/system/inventory-web@.service':
-      ensure => 'link',
-      target => "${install_dir}/systemd/inventory-web@.service";
+      ensure  => 'file',
+      mode    => '0644',
+      content => epp('inventory_md/inventory-web@.service.epp');
   }
 
   # Reload systemd when unit files change
@@ -88,11 +77,10 @@ class inventory_md (
     refreshonly => true,
   }
 
-  # Create instances from parameters, passing down anthropic_api_key
+  # Create instances from parameters
   $instances.each |String $name, Hash $params| {
     inventory_md::instance { $name:
       anthropic_api_key => $anthropic_api_key,
-      install_dir       => $install_dir,
       *                 => $params,
     }
   }
