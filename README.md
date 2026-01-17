@@ -15,19 +15,20 @@ Features:
 ## Requirements
 
 - Puppet 7.0 or later
-- Ubuntu 20.04/22.04/24.04 or Debian 11/12
-- Python 3 with pip
+- Supported operating systems:
+  - Ubuntu 20.04/22.04/24.04
+  - Debian 11/12
+  - RHEL/CentOS/Rocky/Alma 8/9
+  - Fedora
+  - Arch Linux
+- Python 3 with pip (for non-Arch systems)
 
 ## Dependencies
 
 - [puppetlabs/stdlib](https://forge.puppet.com/modules/puppetlabs/stdlib) >= 8.0.0
+- [puppet-aur](https://forge.puppet.com/modules/lfaucheux/aur) (optional, for Arch Linux AUR support)
 
-## Installation alternatives
-
-For **Arch Linux**, consider using the AUR package `inventory-md` instead, which includes systemd services and proper system integration:
-```bash
-yay -S inventory-md
-```
+On Arch Linux, if the puppet-aur module is available, the module automatically installs from AUR instead of PyPI.
 
 ## Usage
 

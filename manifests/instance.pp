@@ -27,6 +27,9 @@
 # @param additional_members
 #   Users to add to the instance group for collaborative access.
 #
+# @param use_aur
+#   Internal parameter set by main class. True if using AUR package on Arch Linux.
+#
 # @example Basic instance
 #   inventory_md::instance { 'myinventory':
 #     datadir  => '/var/www/inventory/myinventory',
@@ -42,6 +45,7 @@ define inventory_md::instance (
   Integer[0, 690] $uid_offset         = fqdn_rand(690, $name),
   Optional[String] $anthropic_api_key = undef,
   Array[String] $additional_members   = [],
+  Boolean $use_aur                    = false,
 ) {
   # Create user and group for this instance
   if !defined(Group[$group]) {
@@ -89,14 +93,29 @@ define inventory_md::instance (
   }
 
   # Enable and start API service
-  service { "inventory-api@${name}":
-    ensure  => running,
-    enable  => true,
-    require => [
-      File['/etc/systemd/system/inventory-api@.service'],
-      File["/etc/inventory-system/${name}.conf"],
-      File[$datadir],
-      Package['inventory-md'],
-    ],
+  # Dependencies differ based on installation method
+  if $use_aur {
+    # AUR package includes systemd service files
+    service { "inventory-api@${name}":
+      ensure  => running,
+      enable  => true,
+      require => [
+        Aur['inventory-md'],
+        File["/etc/inventory-system/${name}.conf"],
+        File[$datadir],
+      ],
+    }
+  } else {
+    # Pip installation - we manage the systemd service file
+    service { "inventory-api@${name}":
+      ensure  => running,
+      enable  => true,
+      require => [
+        File['/etc/systemd/system/inventory-api@.service'],
+        File["/etc/inventory-system/${name}.conf"],
+        File[$datadir],
+        Package['inventory-md'],
+      ],
+    }
   }
 }
