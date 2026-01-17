@@ -4,17 +4,11 @@ describe 'inventory_md' do
   context 'with default parameters' do
     it { is_expected.to compile.with_all_deps }
 
-    it { is_expected.to contain_package('python3-pip') }
-    it { is_expected.to contain_package('python3-venv') }
-    it { is_expected.to contain_package('git') }
-    it { is_expected.to contain_package('make') }
-
     it {
-      is_expected.to contain_vcsrepo('/opt/inventory-system').with(
-        ensure: 'latest',
-        provider: 'git',
-        source: 'https://github.com/tobixen/inventory-system.git',
-        revision: 'main',
+      is_expected.to contain_package('inventory-md').with(
+        ensure: 'present',
+        name: 'inventory-md[chat]',
+        provider: 'pip3',
       )
     }
 
@@ -22,38 +16,41 @@ describe 'inventory_md' do
 
     it {
       is_expected.to contain_file('/etc/systemd/system/inventory-api@.service').with(
-        ensure: 'link',
-        target: '/opt/inventory-system/systemd/inventory-api@.service',
+        ensure: 'file',
+        mode: '0644',
       )
     }
 
     it {
       is_expected.to contain_file('/etc/systemd/system/inventory-web@.service').with(
-        ensure: 'link',
-        target: '/opt/inventory-system/systemd/inventory-web@.service',
+        ensure: 'file',
+        mode: '0644',
       )
     }
 
     it { is_expected.to contain_exec('systemd-daemon-reload').with_refreshonly(true) }
-    it { is_expected.to contain_exec('install-inventory-system').with_refreshonly(true) }
-    it { is_expected.to contain_exec('initial-install-inventory-system') }
   end
 
-  context 'with custom install_dir' do
-    let(:params) { { install_dir: '/srv/inventory' } }
+  context 'with custom pip_extras' do
+    let(:params) { { pip_extras: ['chat', 'barcode'] } }
 
     it { is_expected.to compile.with_all_deps }
 
     it {
-      is_expected.to contain_vcsrepo('/srv/inventory').with(
-        ensure: 'latest',
-        provider: 'git',
+      is_expected.to contain_package('inventory-md').with(
+        name: 'inventory-md[chat,barcode]',
       )
     }
+  end
+
+  context 'with empty pip_extras' do
+    let(:params) { { pip_extras: [] } }
+
+    it { is_expected.to compile.with_all_deps }
 
     it {
-      is_expected.to contain_file('/etc/systemd/system/inventory-api@.service').with(
-        target: '/srv/inventory/systemd/inventory-api@.service',
+      is_expected.to contain_package('inventory-md').with(
+        name: 'inventory-md',
       )
     }
   end

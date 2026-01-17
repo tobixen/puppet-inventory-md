@@ -51,6 +51,7 @@ describe 'inventory_md::instance' do
       is_expected.to contain_file('/etc/inventory-system/testinv.conf')
         .with_content(%r{INVENTORY_PATH=/var/www/inventory/testinv})
         .with_content(%r{API_PORT=8765})
+        .with_content(%r{API_HOST=127\.0\.0\.1})
     }
 
     it {
@@ -59,24 +60,6 @@ describe 'inventory_md::instance' do
         enable: true,
       )
     }
-
-    it { is_expected.to contain_file('/var/lib/inventory-system').with_ensure('directory') }
-
-    it {
-      is_expected.to contain_exec('git-init-bare-testinv').with(
-        creates: '/var/lib/inventory-system/testinv.git/config',
-      )
-    }
-
-    it {
-      is_expected.to contain_file('/var/lib/inventory-system/testinv.git/hooks/post-receive').with(
-        ensure: 'file',
-        mode: '0755',
-      )
-    }
-
-    it { is_expected.to contain_exec('git-init-prod-testinv') }
-    it { is_expected.to contain_exec('git-add-remote-testinv') }
   end
 
   context 'with custom user and group' do
@@ -96,6 +79,19 @@ describe 'inventory_md::instance' do
         owner: 'invuser',
         group: 'invgroup',
       )
+    }
+  end
+
+  context 'with custom api_host' do
+    let(:params) do
+      super().merge(api_host: '0.0.0.0')
+    end
+
+    it { is_expected.to compile.with_all_deps }
+
+    it {
+      is_expected.to contain_file('/etc/inventory-system/testinv.conf')
+        .with_content(%r{API_HOST=0\.0\.0\.0})
     }
   end
 
@@ -131,26 +127,6 @@ describe 'inventory_md::instance' do
     it {
       is_expected.to contain_group('inventory-testinv').with(
         members: ['alice', 'bob'],
-      )
-    }
-  end
-
-  context 'with custom git_bare_repo' do
-    let(:params) do
-      super().merge(git_bare_repo: '/srv/git/testinv.git')
-    end
-
-    it { is_expected.to compile.with_all_deps }
-
-    it {
-      is_expected.to contain_exec('git-init-bare-testinv').with(
-        creates: '/srv/git/testinv.git/config',
-      )
-    }
-
-    it {
-      is_expected.to contain_file('/srv/git/testinv.git/hooks/post-receive').with(
-        ensure: 'file',
       )
     }
   end
