@@ -37,7 +37,8 @@ class inventory_md (
   # Determine installation method based on OS and available modules
   # On Arch Linux with puppet-aur module available, use AUR package
   # Otherwise, install from PyPI using pip
-  $use_aur = ($facts['os']['name'] == 'Archlinux') and defined('aur')
+  $os_name = $facts.dig('os', 'name')
+  $use_aur = ($os_name == 'Archlinux') and defined('aur')
 
   if $use_aur {
     # Install from AUR - includes systemd services
