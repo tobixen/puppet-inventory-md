@@ -126,9 +126,10 @@ define inventory_md::instance (
       require => File['/var/lib/inventory-system'],
     }
 
-    # Set ownership of bare repo
+    # Set ownership and permissions of bare repo
+    # Group-writable so both API server and group members can push
     exec { "chown-bare-repo-${name}":
-      command     => "/usr/bin/chown -R ${user}:${group} ${git_bare_repo}",
+      command     => "/usr/bin/chown -R ${user}:${group} ${git_bare_repo} && /usr/bin/chmod -R g+rwX ${git_bare_repo} && /usr/bin/find ${git_bare_repo} -type d -exec chmod g+s {} \\;",
       refreshonly => true,
       subscribe   => Exec["git-init-bare-${name}"],
     }
@@ -148,7 +149,7 @@ define inventory_md::instance (
 
     # Initialize git in the data directory
     exec { "git-init-datadir-${name}":
-      command => "/usr/bin/git init",
+      command => '/usr/bin/git init',
       cwd     => $datadir,
       creates => "${datadir}/.git",
       user    => $user,
@@ -157,9 +158,9 @@ define inventory_md::instance (
 
     # Configure git user for commits
     exec { "git-config-user-${name}":
-      command => "/usr/bin/git config user.name 'Inventory System' && /usr/bin/git config user.email 'inventory@localhost'",
+      command => '/usr/bin/git config user.name "Inventory System" && /usr/bin/git config user.email "inventory@localhost"',
       cwd     => $datadir,
-      unless  => "/usr/bin/git config user.name",
+      unless  => '/usr/bin/git config user.name',
       user    => $user,
       require => Exec["git-init-datadir-${name}"],
     }
