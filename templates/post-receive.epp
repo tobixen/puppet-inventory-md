@@ -1,0 +1,23 @@
+<%- | String $datadir, String $user | -%>
+#!/bin/bash
+# Post-receive hook for inventory-system
+# Updates the working directory after receiving a push
+
+set -e
+
+DATADIR="<%= $datadir %>"
+BRANCH="main"
+
+# Check out the latest changes to the working directory
+echo "Updating working directory: ${DATADIR}"
+GIT_WORK_TREE="${DATADIR}" git checkout -f "${BRANCH}" 2>/dev/null || \
+GIT_WORK_TREE="${DATADIR}" git checkout -f master 2>/dev/null || \
+echo "Warning: Could not checkout branch ${BRANCH} or master"
+
+# Regenerate inventory.json if inventory-md is available
+if command -v inventory-md &> /dev/null; then
+  echo "Regenerating inventory.json..."
+  cd "${DATADIR}" && inventory-md parse --auto 2>/dev/null || true
+fi
+
+echo "Post-receive hook completed"

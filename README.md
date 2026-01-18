@@ -113,6 +113,9 @@ inventory_md::instances:
 | `user` | String | `inventory-$name` | System user |
 | `group` | String | `inventory-$name` | System group |
 | `additional_members` | Array[String] | [] | Users to add to instance group |
+| `manage_git` | Boolean | true | Set up git repository for version control |
+| `git_bare_repo` | Stdlib::Absolutepath | `/var/lib/inventory-system/$name.git` | Path to bare git repository |
+| `git_remote` | Optional[String] | undef | Remote URL for syncing between hosts |
 
 ## Web server proxy configuration
 

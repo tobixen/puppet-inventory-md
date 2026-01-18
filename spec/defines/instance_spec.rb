@@ -60,6 +60,28 @@ describe 'inventory_md::instance' do
         enable: true,
       )
     }
+
+    # Git management is enabled by default
+    it { is_expected.to contain_file('/var/lib/inventory-system').with_ensure('directory') }
+
+    it {
+      is_expected.to contain_exec('git-init-bare-testinv').with(
+        creates: '/var/lib/inventory-system/testinv.git/config',
+      )
+    }
+
+    it {
+      is_expected.to contain_file('/var/lib/inventory-system/testinv.git/hooks/post-receive').with(
+        ensure: 'file',
+        mode: '0755',
+        owner: 'inventory-testinv',
+        group: 'inventory-testinv',
+      )
+    }
+
+    it { is_expected.to contain_exec('git-init-datadir-testinv') }
+    it { is_expected.to contain_exec('git-config-user-testinv') }
+    it { is_expected.to contain_exec('git-add-local-remote-testinv') }
   end
 
   context 'with custom user and group' do
@@ -129,5 +151,45 @@ describe 'inventory_md::instance' do
         members: ['alice', 'bob'],
       )
     }
+  end
+
+  context 'with manage_git disabled' do
+    let(:params) do
+      super().merge(manage_git: false)
+    end
+
+    it { is_expected.to compile.with_all_deps }
+    it { is_expected.not_to contain_file('/var/lib/inventory-system') }
+    it { is_expected.not_to contain_exec('git-init-bare-testinv') }
+    it { is_expected.not_to contain_exec('git-init-datadir-testinv') }
+  end
+
+  context 'with custom git_bare_repo' do
+    let(:params) do
+      super().merge(git_bare_repo: '/srv/git/testinv.git')
+    end
+
+    it { is_expected.to compile.with_all_deps }
+
+    it {
+      is_expected.to contain_exec('git-init-bare-testinv').with(
+        creates: '/srv/git/testinv.git/config',
+      )
+    }
+
+    it {
+      is_expected.to contain_file('/srv/git/testinv.git/hooks/post-receive').with(
+        ensure: 'file',
+      )
+    }
+  end
+
+  context 'with git_remote' do
+    let(:params) do
+      super().merge(git_remote: 'git@github.com:user/inventory.git')
+    end
+
+    it { is_expected.to compile.with_all_deps }
+    it { is_expected.to contain_exec('git-add-origin-remote-testinv') }
   end
 end
