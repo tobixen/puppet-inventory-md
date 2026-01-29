@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.0] - 2026-01-29
+
+### Changed
+- Default `package_ensure` from 'present' to 'latest' for automatic updates
+
 ## [0.1.0] - 2026-01-13
 
 ### Added

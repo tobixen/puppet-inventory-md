@@ -11,7 +11,7 @@
 #   Optional Anthropic API key for Claude chat functionality.
 #
 # @param package_ensure
-#   Version or 'present'/'latest' for the pip package.
+#   Version or 'present'/'latest' for the pip package. Default: 'latest'
 #
 # @param pip_extras
 #   Pip extras to install, e.g., ['chat', 'barcode']. Default: ['chat']
@@ -31,7 +31,7 @@
 class inventory_md (
   Hash $instances                    = {},
   Optional[String] $anthropic_api_key = undef,
-  String $package_ensure             = 'present',
+  String $package_ensure             = 'latest',
   Array[String] $pip_extras          = ['chat'],
 ) {
   # Determine installation method based on OS and available modules

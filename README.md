@@ -100,7 +100,7 @@ inventory_md::instances:
 |-----------|------|---------|-------------|
 | `instances` | Hash | {} | Hash of instances to create |
 | `anthropic_api_key` | Optional[String] | undef | API key for Claude chat |
-| `package_ensure` | String | 'present' | Version or present/latest |
+| `package_ensure` | String | 'latest' | Version or present/latest |
 | `pip_extras` | Array[String] | ['chat'] | Pip extras to install |
 
 ### Instance parameters

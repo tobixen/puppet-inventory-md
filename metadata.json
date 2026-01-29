@@ -1,6 +1,6 @@
 {
   "name": "tobixen-inventory_md",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "author": "tobixen",
   "summary": "Puppet module for deploying inventory-system instances",
   "license": "Apache-2.0",
