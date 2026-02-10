@@ -17,7 +17,7 @@ describe 'inventory_md' do
 
     it {
       is_expected.to contain_package('inventory-md').with(
-        ensure: 'present',
+        ensure: 'latest',
         name: 'inventory-md[chat]',
         provider: 'pip3',
       )
