@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [0.2.1] - 2026-02-12
+
+### Fixed
+- Spec test expected 'present' instead of 'latest' after default change, breaking CI and Forge publish
+
 ## [0.2.0] - 2026-01-29
 
 ### Changed
