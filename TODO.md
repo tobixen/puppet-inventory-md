@@ -4,10 +4,6 @@
 * Deploy a publicly accessible instance with fake/example content
 * Useful for showcasing the module and inventory-md project
 
-## Release to forge.puppetlabs.com
-* The CI workflow is set up but the v0.2.0 publish failed due to broken spec tests
-* After fixing spec tests, re-tag and push to trigger the publish workflow
-
 ## Module structure
 * Consider refactoring to follow the install/config/service pattern used by many Puppet modules. Current structure (init.pp + instance.pp) is reasonable for module complexity, but could be split further if needed.
 
@@ -18,6 +14,7 @@
   * Flagging mechanism for conflicts that require manual resolution
 
 ## Completed
+* ~~Release to forge.puppetlabs.com~~ - Published as v0.2.1
 * ~~Git bare repo setup~~ - Implemented with `manage_git` parameter (default: true)
 * ~~Post-receive hook for updating working directory~~ - Implemented
 * ~~Git initialization in datadir~~ - Implemented
