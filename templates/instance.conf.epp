@@ -1,4 +1,4 @@
-<%- | String $name, String $datadir, Integer $api_port, String $api_host, Optional[String] $anthropic_api_key | -%>
+<%- | String $name, String $datadir, Integer $api_port, String $api_host, Optional[String] $anthropic_api_key, String $cache_dir | -%>
 # Inventory System Configuration for <%= $name %> instance
 # Managed by Puppet
 
@@ -8,6 +8,9 @@ INVENTORY_PATH=<%= $datadir %>
 # API server host and port
 API_HOST=<%= $api_host %>
 API_PORT=<%= $api_port %>
+
+# SKOS vocabulary cache directory
+INVENTORY_MD_SKOS__CACHE_DIR=<%= $cache_dir %>/skos
 
 <% if $anthropic_api_key { -%>
 # Anthropic API key for Claude chat

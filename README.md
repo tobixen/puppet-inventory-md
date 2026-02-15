@@ -116,6 +116,7 @@ inventory_md::instances:
 | `manage_git` | Boolean | true | Set up git repository for version control |
 | `git_bare_repo` | Stdlib::Absolutepath | `/var/lib/inventory-system/$name.git` | Path to bare git repository |
 | `git_remote` | Optional[String] | undef | Remote URL for syncing between hosts |
+| `cache_dir` | Stdlib::Absolutepath | `/var/cache/inventory-md/$name` | Per-instance cache directory; the SKOS vocabulary cache goes in its `skos/` subdirectory |
 
 ## Web server proxy configuration
 

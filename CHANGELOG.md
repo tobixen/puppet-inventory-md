@@ -2,6 +2,11 @@
 
 All notable changes to this project will be documented in this file.
 
+## [Unreleased]
+
+### Added
+- `cache_dir` instance parameter (default `/var/cache/inventory-md/<instance>`); the service gets `INVENTORY_MD_SKOS__CACHE_DIR=<cache_dir>/skos`, keeping the SKOS vocabulary cache out of the datadir
+
 ## [0.2.1] - 2026-02-12
 
 ### Fixed

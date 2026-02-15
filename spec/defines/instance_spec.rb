@@ -54,6 +54,22 @@ describe 'inventory_md::instance' do
         .with_content(%r{API_HOST=127\.0\.0\.1})
     }
 
+    it { is_expected.to contain_file('/var/cache/inventory-md').with_ensure('directory') }
+
+    it {
+      is_expected.to contain_file('/var/cache/inventory-md/testinv').with(
+        ensure: 'directory',
+        owner: 'inventory-testinv',
+        group: 'inventory-testinv',
+        mode: '0750',
+      )
+    }
+
+    it {
+      is_expected.to contain_file('/etc/inventory-system/testinv.conf')
+        .with_content(%r{INVENTORY_MD_SKOS__CACHE_DIR=/var/cache/inventory-md/testinv/skos})
+    }
+
     it {
       is_expected.to contain_service('inventory-api@testinv').with(
         ensure: 'running',

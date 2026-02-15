@@ -37,6 +37,11 @@
 # @param git_remote
 #   Optional remote URL to configure for syncing between hosts.
 #
+# @param cache_dir
+#   Per-instance cache directory. The SKOS vocabulary cache is kept in its
+#   skos/ subdirectory, which the service creates.
+#   Default: /var/cache/inventory-md/${name}
+#
 # @param use_aur
 #   Internal parameter set by main class. True if using AUR package on Arch Linux.
 #
@@ -65,6 +70,7 @@ define inventory_md::instance (
   Boolean $manage_git                          = true,
   Stdlib::Absolutepath $git_bare_repo          = "/var/lib/inventory-system/${name}.git",
   Optional[String] $git_remote                 = undef,
+  Stdlib::Absolutepath $cache_dir              = "/var/cache/inventory-md/${name}",
   Boolean $use_aur                             = false,
 ) {
   # Create user and group for this instance
@@ -93,6 +99,15 @@ define inventory_md::instance (
     group   => $group,
     mode    => '2775',  # Setgid + group write for collaboration
     require => User[$user],
+  }
+
+  # SKOS vocabulary cache directory
+  file { $cache_dir:
+    ensure  => 'directory',
+    owner   => $user,
+    group   => $group,
+    mode    => '0750',
+    require => [User[$user], File['/var/cache/inventory-md']],
   }
 
   # Git repository management
@@ -198,6 +213,7 @@ define inventory_md::instance (
       'api_port'          => $api_port,
       'api_host'          => $api_host,
       'anthropic_api_key' => $anthropic_api_key,
+      'cache_dir'         => $cache_dir,
     }),
     require => File['/etc/inventory-system'],
     notify  => Service["inventory-api@${name}"],

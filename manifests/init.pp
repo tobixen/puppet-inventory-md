@@ -67,6 +67,14 @@ class inventory_md (
     mode   => '0755',
   }
 
+  # Create parent directory for SKOS cache
+  file { '/var/cache/inventory-md':
+    ensure => 'directory',
+    owner  => 'root',
+    group  => 'root',
+    mode   => '0755',
+  }
+
   # For pip installations, we need to manage systemd template services
   # AUR package includes its own systemd files
   if !$use_aur {
