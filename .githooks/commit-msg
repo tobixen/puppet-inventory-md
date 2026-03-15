@@ -1,0 +1,4 @@
+#!/bin/sh
+# Check the commit message against .pre-commit-config.yaml's commit-msg
+# hooks (Conventional Commits).  Needs pre-commit on PATH.
+exec pre-commit run --hook-stage commit-msg --commit-msg-filename "$1"

@@ -193,6 +193,14 @@ bundle exec rake spec
 bundle exec rake lint
 ```
 
+Enable the project's git hooks once per clone (the commit-msg hook needs
+[pre-commit](https://pre-commit.com/) installed):
+```bash
+bundle exec rake setup
+```
+The commit-msg hook enforces [Conventional Commits](https://www.conventionalcommits.org/);
+the pre-push hook refuses a `vX.Y.Z` tag whose `metadata.json` says another version.
+
 ## License
 
 Apache-2.0
