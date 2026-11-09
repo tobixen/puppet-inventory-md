@@ -7,6 +7,9 @@ All notable changes to this project will be documented in this file.
 ### Added
 - `cache_dir` instance parameter (default `/var/cache/inventory-md/<instance>`); the service gets `INVENTORY_MD_SKOS__CACHE_DIR=<cache_dir>/skos`, keeping the SKOS vocabulary cache out of the datadir
 
+### Fixed
+- With any `pip_extras` (the default is `['chat']`), the pip package was reinstalled on every agent run, since the pip provider never finds a name with extras in `pip freeze`; the extras are now installed by a separate exec that only runs when they are missing. With `package_ensure => latest`, only inventory-md itself is upgraded now, not the extras' dependencies (e.g. `anthropic`)
+
 ## [0.2.1] - 2026-02-12
 
 ### Fixed

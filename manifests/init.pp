@@ -32,7 +32,7 @@ class inventory_md (
   Hash $instances                    = {},
   Optional[String] $anthropic_api_key = undef,
   String $package_ensure             = 'latest',
-  Array[String] $pip_extras          = ['chat'],
+  Array[Pattern[/\A[A-Za-z0-9._-]+\z/]] $pip_extras = ['chat'],
 ) {
   # Determine installation method based on OS and available modules
   # On Arch Linux with puppet-aur module available, use AUR package
@@ -53,11 +53,28 @@ class inventory_md (
     }
     $package_name = "inventory-md${extras_str}"
 
-    # Install inventory-md from PyPI
+    # Install inventory-md from PyPI.  The extras go in an exec of their
+    # own: the pip provider looks the resource name up in `pip freeze`,
+    # which never lists extras, so 'inventory-md[chat]' was reinstalled
+    # on every run.  The extras' own dependencies are not upgraded by
+    # package_ensure => latest.  An offline install is the check rather
+    # than `--dry-run`, which pip < 22.2 (Ubuntu 22.04) lacks: it exits 0
+    # only when everything is already installed.
     package { 'inventory-md':
       ensure   => $package_ensure,
-      name     => $package_name,
+      name     => 'inventory-md',
       provider => pip3,
+    }
+
+    unless $pip_extras.empty or $package_ensure == 'absent' {
+      exec { 'inventory-md-extras':
+        command => "pip3 install '${package_name}'",
+        unless  => "pip3 install --no-index --quiet '${package_name}'",
+        path    => ['/usr/local/bin', '/usr/bin', '/bin'],
+        require => Package['inventory-md'],
+      }
+      # The API needs the extras, and a restart once they are installed
+      Exec['inventory-md-extras'] ~> Service <| tag == 'inventory_md::instance' |>
     }
   }
 

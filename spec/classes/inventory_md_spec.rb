@@ -18,8 +18,21 @@ describe 'inventory_md' do
     it {
       is_expected.to contain_package('inventory-md').with(
         ensure: 'latest',
-        name: 'inventory-md[chat]',
+        name: 'inventory-md',
         provider: 'pip3',
+      )
+    }
+
+    # The pip provider compares the resource name with `pip freeze`, which
+    # never lists extras, so a name like 'inventory-md[chat]' is never found
+    # and gets reinstalled on every agent run.  The check must not need
+    # `pip install --dry-run`, which pip < 22.2 (Ubuntu 22.04) lacks.
+    it {
+      is_expected.to contain_exec('inventory-md-extras').with(
+        command: "pip3 install 'inventory-md[chat]'",
+        unless: "pip3 install --no-index --quiet 'inventory-md[chat]'",
+        path: ['/usr/local/bin', '/usr/bin', '/bin'],
+        require: 'Package[inventory-md]',
       )
     }
 
@@ -89,9 +102,29 @@ describe 'inventory_md' do
 
     it {
       is_expected.to contain_package('inventory-md').with(
-        name: 'inventory-md[chat,barcode]',
+        name: 'inventory-md',
       )
     }
+
+    it {
+      is_expected.to contain_exec('inventory-md-extras').with_command(
+        "pip3 install 'inventory-md[chat,barcode]'",
+      )
+    }
+  end
+
+  context 'with package_ensure absent' do
+    let(:params) { { package_ensure: 'absent' } }
+
+    it { is_expected.to compile.with_all_deps }
+    it { is_expected.to contain_package('inventory-md').with_ensure('absent') }
+    it { is_expected.not_to contain_exec('inventory-md-extras') }
+  end
+
+  context 'with a pip extra that is not a plain name' do
+    let(:params) { { pip_extras: ["chat'; touch /tmp/x; '"] } }
+
+    it { is_expected.to compile.and_raise_error(%r{pip_extras}) }
   end
 
   context 'with empty pip_extras' do
@@ -104,6 +137,8 @@ describe 'inventory_md' do
         name: 'inventory-md',
       )
     }
+
+    it { is_expected.not_to contain_exec('inventory-md-extras') }
   end
 
   context 'with an instance' do
@@ -120,6 +155,10 @@ describe 'inventory_md' do
 
     it { is_expected.to compile.with_all_deps }
     it { is_expected.to contain_inventory_md__instance('test') }
+
+    # The API needs the extras (chat) to be in place, and restarted when
+    # they arrive
+    it { is_expected.to contain_exec('inventory-md-extras').that_notifies('Service[inventory-api@test]') }
   end
 
   context 'with anthropic_api_key' do
