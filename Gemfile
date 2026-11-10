@@ -9,4 +9,7 @@ group :test do
   gem 'rspec-puppet', '~> 4.0'
   gem 'rspec-puppet-facts', '~> 3.0'
   gem 'puppet-lint', '~> 4.0'
+  # Ruby 3.4 no longer ships syslog as a default gem; puppet 8.10
+  # still needs it to detect a POSIX system
+  gem 'syslog'
 end
