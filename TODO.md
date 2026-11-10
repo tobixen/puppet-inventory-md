@@ -13,6 +13,9 @@
   * Scripts for bidirectional merge between main and production branches (fast-forward only)
   * Flagging mechanism for conflicts that require manual resolution
 
+## PEP 668 hosts (Debian 12, Ubuntu 24.04)
+* System `pip3 install` there refuses with externally-managed-environment unless `break-system-packages` is configured, so both the pip3 package and the `inventory-md-extras` exec fail on every run. Either document the pip.conf requirement in the README or install into a venv (e.g. `/opt/inventory-md`) instead.
+
 ## Completed
 * ~~Release to forge.puppetlabs.com~~ - Published as v0.2.1
 * ~~Git bare repo setup~~ - Implemented with `manage_git` parameter (default: true)
